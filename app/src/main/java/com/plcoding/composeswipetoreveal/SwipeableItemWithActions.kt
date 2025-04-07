@@ -28,6 +28,18 @@ import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+/**
+ * 一個可以左右滑動的可組合項目，滑動後會顯示出一組操作按鈕。
+ *
+ * 常見應用像是：在列表中對某個項目滑動，顯示「刪除」、「分享」、「編輯」等按鈕。
+ *
+ * @param isRevealed 控制是否展開操作列
+ * @param actions 操作列中的按鈕內容（Composable RowScope）
+ * @param modifier 外部可套用的 Modifier
+ * @param onExpanded 當滑動超過一半、展開時要執行的動作（如更新狀態）
+ * @param onCollapsed 當滑動不足一半、收合時要執行的動作
+ * @param content 主內容區塊，例如聯絡人名稱、清單項目等
+ */
 @Composable
 fun SwipeableItemWithActions(
     isRevealed: Boolean,
@@ -37,18 +49,27 @@ fun SwipeableItemWithActions(
     onCollapsed: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
+
+    // 儲存操作按鈕列的寬度（用於決定滑動最大距離）
     var contextMenuWidth by remember {
         mutableFloatStateOf(0f)
     }
+
+    // 用於動畫處理的偏移值（橫向滑動距離）
     val offset = remember {
         Animatable(initialValue = 0f)
     }
+
+    // coroutine scope，用來執行動畫
     val scope = rememberCoroutineScope()
 
+    // 根據 isRevealed 控制展開或收起動畫
     LaunchedEffect(key1 = isRevealed, contextMenuWidth) {
-        if(isRevealed) {
+        if (isRevealed) {
+            // 展開到最大寬度
             offset.animateTo(contextMenuWidth)
         } else {
+            // 收回到原位
             offset.animateTo(0f)
         }
     }
@@ -58,6 +79,8 @@ fun SwipeableItemWithActions(
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
     ) {
+
+        // 底層操作列，放置按鈕（例如刪除、分享）
         Row(
             modifier = Modifier
                 .onSizeChanged {
@@ -67,6 +90,8 @@ fun SwipeableItemWithActions(
         ) {
             actions()
         }
+
+        // 上層內容：例如聯絡人資料卡片，可滑動覆蓋在按鈕上
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -88,7 +113,6 @@ fun SwipeableItemWithActions(
                                         onExpanded()
                                     }
                                 }
-
                                 else -> {
                                     scope.launch {
                                         offset.animateTo(0f)

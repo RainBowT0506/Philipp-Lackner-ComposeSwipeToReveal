@@ -42,15 +42,23 @@ fun ContactScreen() {
         itemsIndexed(
             items = contacts,
         ) { index, contact ->
+
+            // 使用 SwipeableItemWithActions 包裝每個聯絡人項目
+            // 支援向右滑動展開操作按鈕列（刪除 / 寄信 / 分享）
             SwipeableItemWithActions(
                 isRevealed = contact.isOptionsRevealed,
                 onExpanded = {
+                    // 當滑動展開時，更新該聯絡人為展開狀態
                     contacts[index] = contact.copy(isOptionsRevealed = true)
                 },
                 onCollapsed = {
+                    // 當滑動收合時，更新該聯絡人為未展開
                     contacts[index] = contact.copy(isOptionsRevealed = false)
                 },
+
+                // 定義滑動展開後會顯示的動作按鈕們（排列在 Row 裡）
                 actions = {
+                    // 刪除按鈕
                     ActionIcon(
                         onClick = {
                             Toast.makeText(
@@ -64,6 +72,7 @@ fun ContactScreen() {
                         icon = Icons.Default.Delete,
                         modifier = Modifier.fillMaxHeight()
                     )
+                    // 寄送 Email 按鈕
                     ActionIcon(
                         onClick = {
                             contacts[index] = contact.copy(isOptionsRevealed = false)
@@ -77,6 +86,7 @@ fun ContactScreen() {
                         icon = Icons.Default.Email,
                         modifier = Modifier.fillMaxHeight()
                     )
+                    // 分享按鈕
                     ActionIcon(
                         onClick = {
                             contacts[index] = contact.copy(isOptionsRevealed = false)
