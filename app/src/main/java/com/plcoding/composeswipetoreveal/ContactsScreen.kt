@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.plcoding.composeswipetoreveal.ui.theme.PinBgColor
+import com.plcoding.composeswipetoreveal.ui.theme.UnpinBgColor
 
 @Composable
 fun ContactScreen() {
@@ -58,48 +60,22 @@ fun ContactScreen() {
 
                 // 定義滑動展開後會顯示的動作按鈕們（排列在 Row 裡）
                 actions = {
-                    // 刪除按鈕
-                    ActionIcon(
-                        onClick = {
-                            Toast.makeText(
-                                context,
-                                "Contact ${contact.id} was deleted.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            contacts.remove(contact)
-                        },
-                        backgroundColor = Color.Red,
-                        icon = Icons.Default.Delete,
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                    // 寄送 Email 按鈕
-                    ActionIcon(
-                        onClick = {
-                            contacts[index] = contact.copy(isOptionsRevealed = false)
-                            Toast.makeText(
-                                context,
-                                "Contact ${contact.id} was sent an email.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                        backgroundColor = Color.Yellow,
-                        icon = Icons.Default.Email,
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                    // 分享按鈕
-                    ActionIcon(
-                        onClick = {
-                            contacts[index] = contact.copy(isOptionsRevealed = false)
-                            Toast.makeText(
-                                context,
-                                "Contact ${contact.id} was shared.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                        backgroundColor = Color.Magenta,
-                        icon = Icons.Default.Share,
-                        modifier = Modifier.fillMaxHeight()
-                    )
+                    PinActionBlock{
+                        Toast.makeText(
+                            context,
+                            "Contact ${contact.id} was deleted.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        contacts.remove(contact)
+                    }
+                    UnpinActionBlock{
+                        contacts[index] = contact.copy(isOptionsRevealed = false)
+                        Toast.makeText(
+                            context,
+                            "Contact ${contact.id} was sent an email.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 },
             ) {
                 Text(
